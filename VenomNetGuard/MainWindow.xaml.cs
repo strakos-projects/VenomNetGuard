@@ -23,9 +23,11 @@ namespace VenomNetGuard
         private bool _isRealExit = false;
         private readonly string _saveFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "nexus_data.json");
         private System.Windows.Threading.DispatcherTimer _trayRetryTimer;
+        private bool _hasShownTrayNotification = false;
         private void MarkAllReviewed_Click(object sender, RoutedEventArgs e)
         {
             SecurityEvents.Clear();
+            _totalWarningsCount = 0;
             UpdateDashboardCounters();
             SaveData(); 
         }
@@ -74,7 +76,7 @@ namespace VenomNetGuard
         public MainWindow()
         {
             InitializeComponent();
-
+            UpdateNavUI("Dashboard");
             _notifyIcon = new Forms.NotifyIcon();
             _notifyIcon.Icon = SystemIcons.Shield;
             _notifyIcon.Text = Properties.Resources.TrayIconText;
@@ -103,6 +105,7 @@ namespace VenomNetGuard
             string[] args = Environment.GetCommandLineArgs();
             if (Array.Exists(args, arg => arg.Equals("-autostart", StringComparison.OrdinalIgnoreCase)))
             {
+                _hasShownTrayNotification = true;
                 this.WindowState = WindowState.Minimized;
                 this.ShowInTaskbar = false;
                 StartTrayRetryMechanism();
@@ -175,7 +178,52 @@ namespace VenomNetGuard
             {
             }
         }
+        private void UpdateNavUI(string activeGrid)
+        {
+            var activeBrush = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#00FFCC"));
+            var inactiveBrush = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#4A4A5A"));
+            var activeBg = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#1F1F2E"));
+            var transparent = System.Windows.Media.Brushes.Transparent;
 
+            if (activeGrid == "Dashboard")
+            {
+                BtnNavDashboard.Foreground = activeBrush;
+                BtnNavDashboard.BorderBrush = activeBrush;
+                BtnNavDashboard.Background = activeBg;
+                BtnNavDashboard.BorderThickness = new Thickness(1, 0, 0, 0);
+
+                BtnNavSettings.Foreground = inactiveBrush;
+                BtnNavSettings.BorderBrush = transparent;
+                BtnNavSettings.Background = transparent;
+                BtnNavSettings.BorderThickness = new Thickness(0);
+            }
+            else
+            {
+                BtnNavSettings.Foreground = activeBrush;
+                BtnNavSettings.BorderBrush = activeBrush;
+                BtnNavSettings.Background = activeBg;
+                BtnNavSettings.BorderThickness = new Thickness(1, 0, 0, 0);
+
+                BtnNavDashboard.Foreground = inactiveBrush;
+                BtnNavDashboard.BorderBrush = transparent;
+                BtnNavDashboard.Background = transparent;
+                BtnNavDashboard.BorderThickness = new Thickness(0);
+            }
+        }
+
+        private void NavDashboard_Click(object sender, RoutedEventArgs e)
+        {
+            GridDashboard.Visibility = Visibility.Visible;
+            GridSettings.Visibility = Visibility.Collapsed;
+            UpdateNavUI("Dashboard"); // Aktualizace menu
+        }
+
+        private void NavSettings_Click(object sender, RoutedEventArgs e)
+        {
+            GridDashboard.Visibility = Visibility.Collapsed;
+            GridSettings.Visibility = Visibility.Visible;
+            UpdateNavUI("Settings"); // Aktualizace menu
+        }
         private void LoadData()
         {
             try
@@ -230,6 +278,16 @@ namespace VenomNetGuard
             {
                 this.Hide();
                 this.ShowInTaskbar = false;
+                if (!_hasShownTrayNotification && _notifyIcon.Visible)
+                {
+                    _notifyIcon.ShowBalloonTip(
+                        3000,
+                        Properties.Resources.BalloonTitleCore,
+                        Properties.Resources.BalloonMsgMinimized,
+                        Forms.ToolTipIcon.Info);
+
+                    _hasShownTrayNotification = true; 
+                }
             }
             base.OnStateChanged(e);
         }
@@ -354,23 +412,17 @@ namespace VenomNetGuard
         {
             if ((sender as FrameworkElement)?.DataContext is SecurityEvent selectedEvent)
             {
+                if (selectedEvent.Severity == "WARN" && _totalWarningsCount > 0)
+                {
+                    _totalWarningsCount--;
+                }
                 SecurityEvents.Remove(selectedEvent);
                 UpdateDashboardCounters();
                 SaveData(); 
             }
         }
-        // PŘEPÍNÁNÍ ZÁLOŽEK
-        private void NavDashboard_Click(object sender, RoutedEventArgs e)
-        {
-            GridDashboard.Visibility = Visibility.Visible;
-            GridSettings.Visibility = Visibility.Collapsed;
-        }
 
-        private void NavSettings_Click(object sender, RoutedEventArgs e)
-        {
-            GridDashboard.Visibility = Visibility.Collapsed;
-            GridSettings.Visibility = Visibility.Visible;
-        }
+
 
         private void ChkRunAtStartup_Checked(object sender, RoutedEventArgs e)
         {

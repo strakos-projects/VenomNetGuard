@@ -16,8 +16,10 @@
             <StackPanel Margin="15">
                 <TextBlock Text="{x:Static p:Resources.TxtNexusCore}" Foreground="#4A4A5A" FontSize="12" FontWeight="Bold" Margin="0,0,0,20"/>
 
-                <Button Background="#1F1F2E" Foreground="#00FFCC" BorderBrush="#00FFCC" BorderThickness="1,0,0,0" 
-                        Padding="10" Margin="0,0,0,10" HorizontalContentAlignment="Left" Cursor="Hand" Click="NavDashboard_Click">
+                <Button x:Name="BtnNavDashboard" 
+        Background="Transparent" Foreground="#4A4A5A" BorderThickness="1,0,0,0" 
+        Padding="10" Margin="0,0,0,10" HorizontalContentAlignment="Left" Cursor="Hand" 
+        Click="NavDashboard_Click">
                     <TextBlock Text="{x:Static p:Resources.BtnEventLogScanner}" FontWeight="Bold"/>
                 </Button>
 
@@ -25,8 +27,10 @@
                         Padding="10" Margin="0,0,0,10" HorizontalContentAlignment="Left" Cursor="No">
                     <TextBlock Text="{x:Static p:Resources.BtnPacketSniffer}" />
                 </Button>
-                <Button x:Name="BtnNavSettings" Background="Transparent" Foreground="#4A4A5A" BorderThickness="0" 
-                        Padding="10" Margin="0,0,0,10" HorizontalContentAlignment="Left" Cursor="Hand" Click="NavSettings_Click">
+                <Button x:Name="BtnNavSettings" 
+        Background="Transparent" Foreground="#4A4A5A" BorderThickness="0" 
+        Padding="10" Margin="0,0,0,10" HorizontalContentAlignment="Left" Cursor="Hand" 
+        Click="NavSettings_Click">
                     <TextBlock Text="{x:Static p:Resources.BtnSettings}" FontWeight="Bold"/>
                 </Button>
                 <TextBlock Text="{x:Static p:Resources.TxtAlertSettings}" Foreground="#4A4A5A" FontSize="12" FontWeight="Bold" Margin="0,20,0,10"/>

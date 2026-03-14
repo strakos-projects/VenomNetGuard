@@ -234,5 +234,7 @@ IP: {1}
   </data>
     <data name="TxtStartupDesc" xml:space="preserve">
     <value>Zaregistruje úlohu s nejvyšším oprávněním (Admin), aby se program spouštěl tiše na pozadí bez nutnosti odklikávat bezpečnostní varování UAC.</value>
+  </data><data name="BalloonMsgMinimized" xml:space="preserve">
+<value>Venom NetGuard stále běží na pozadí. Pro úplné ukončení klikněte pravým tlačítkem na ikonu v liště.</value>
   </data>
 </root>

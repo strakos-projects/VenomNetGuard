@@ -90,6 +90,15 @@ namespace VenomNetGuard.Properties {
         }
         
         /// <summary>
+        ///   Vyhledá lokalizovaný řetězec podobný Venom NetGuard is still running in the background. Right-click the tray icon to exit completely..
+        /// </summary>
+        public static string BalloonMsgMinimized {
+            get {
+                return ResourceManager.GetString("BalloonMsgMinimized", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Vyhledá lokalizovaný řetězec podobný VENOM NETGUARD.
         /// </summary>
         public static string BalloonTitleCore {

@@ -234,5 +234,7 @@ IP: {1}
   </data>
     <data name="TxtStartupDesc" xml:space="preserve">
     <value>Registers a high-privilege scheduled task to run silently on the background without UAC prompts.</value>
+  </data><data name="BalloonMsgMinimized" xml:space="preserve">
+<value>Venom NetGuard is still running in the background. Right-click the tray icon to exit completely.</value>
   </data>
 </root>
