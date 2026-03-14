@@ -1,0 +1,138 @@
+﻿<Window x:Class="VenomNetGuard.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:p="clr-namespace:VenomNetGuard.Properties"
+        Title="{x:Static p:Resources.WindowTitle}" Height="700" Width="1100"
+        Background="#08080A" WindowStartupLocation="CenterScreen" WindowState="Minimized"
+        FontFamily="Consolas">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="220"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Column="0" Background="#121216" BorderBrush="#252530" BorderThickness="0,0,1,0">
+            <StackPanel Margin="15">
+                <TextBlock Text="{x:Static p:Resources.TxtNexusCore}" Foreground="#4A4A5A" FontSize="12" FontWeight="Bold" Margin="0,0,0,20"/>
+
+                <Button Background="#1F1F2E" Foreground="#00FFCC" BorderBrush="#00FFCC" BorderThickness="1,0,0,0" 
+                        Padding="10" Margin="0,0,0,10" HorizontalContentAlignment="Left" Cursor="Hand" Click="NavDashboard_Click">
+                    <TextBlock Text="{x:Static p:Resources.BtnEventLogScanner}" FontWeight="Bold"/>
+                </Button>
+
+                <Button Background="Transparent" Foreground="#4A4A5A" BorderThickness="0" 
+                        Padding="10" Margin="0,0,0,10" HorizontalContentAlignment="Left" Cursor="No">
+                    <TextBlock Text="{x:Static p:Resources.BtnPacketSniffer}" />
+                </Button>
+                <Button x:Name="BtnNavSettings" Background="Transparent" Foreground="#4A4A5A" BorderThickness="0" 
+                        Padding="10" Margin="0,0,0,10" HorizontalContentAlignment="Left" Cursor="Hand" Click="NavSettings_Click">
+                    <TextBlock Text="{x:Static p:Resources.BtnSettings}" FontWeight="Bold"/>
+                </Button>
+                <TextBlock Text="{x:Static p:Resources.TxtAlertSettings}" Foreground="#4A4A5A" FontSize="12" FontWeight="Bold" Margin="0,20,0,10"/>
+
+                <CheckBox x:Name="ChkEnableAlerts" Content="{x:Static p:Resources.ChkEnableTrayAlerts}" IsChecked="True" 
+                          Foreground="#C5C5D0" Margin="10,0,0,10" Cursor="Hand"/>
+
+                <CheckBox x:Name="ChkAlertCrit" Content="{x:Static p:Resources.ChkNotifyCritical}" IsChecked="True" 
+                          Foreground="#FF003C" Margin="25,0,0,8" Cursor="Hand"/>
+
+                <CheckBox x:Name="ChkAlertWarn" Content="{x:Static p:Resources.ChkNotifyWarnings}" IsChecked="False" 
+                          Foreground="#FFB800" Margin="25,0,0,8" Cursor="Hand"/>
+            </StackPanel>
+        </Border>
+
+        <Grid Grid.Column="1" Margin="20">
+            <Grid x:Name="GridDashboard" Visibility="Visible">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" Margin="0,0,0,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Background="#2A0808" BorderBrush="#FF003C" BorderThickness="1" Margin="0,0,10,0" Padding="15">
+                    <StackPanel>
+                        <TextBlock Text="{x:Static p:Resources.TxtPendingReview}" Foreground="#FF4D6D" FontSize="12" FontWeight="Bold"/>
+                        <TextBlock x:Name="TxtPendingCount" Text="00" Foreground="#FF003C" FontSize="36" FontWeight="Black"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="1" Background="#1A1505" BorderBrush="#FFB800" BorderThickness="1" Margin="5,0,5,0" Padding="15">
+                    <StackPanel>
+                        <TextBlock Text="{x:Static p:Resources.TxtWarnings24h}" Foreground="#FFD04D" FontSize="12" FontWeight="Bold"/>
+                        <TextBlock x:Name="TxtWarningsCount" Text="00" Foreground="#FFB800" FontSize="36" FontWeight="Black"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="2" Background="#0A151A" BorderBrush="#00A2FF" BorderThickness="1" Margin="10,0,0,0" Padding="15">
+                    <StackPanel>
+                        <TextBlock Text="{x:Static p:Resources.TxtSystemStatus}" Foreground="#4DBCFF" FontSize="12" FontWeight="Bold"/>
+                        <TextBlock x:Name="TxtStatus" Text="{x:Static p:Resources.TxtSecure}" Foreground="#00A2FF" FontSize="36" FontWeight="Black"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,10">
+                <TextBlock Text="{x:Static p:Resources.TxtFilterBy}" Foreground="#8A8A9A" VerticalAlignment="Center" Margin="0,0,15,0"/>
+                <CheckBox Content="{x:Static p:Resources.ChkFilterCritical}" Foreground="#FF003C" IsChecked="True" Margin="0,0,15,0" VerticalAlignment="Center"/>
+                <CheckBox Content="{x:Static p:Resources.ChkFilterWarning}" Foreground="#FFB800" IsChecked="True" Margin="0,0,15,0" VerticalAlignment="Center"/>
+                <CheckBox Content="{x:Static p:Resources.ChkFilterInfo}" Foreground="#00A2FF" Margin="0,0,15,0" VerticalAlignment="Center"/>
+                <Button Content="{x:Static p:Resources.BtnMarkReviewed}" Background="#1F1F2E" Foreground="#FFFFFF" BorderThickness="0" Padding="10,5" Margin="50,0,0,0" Cursor="Hand" Click="MarkAllReviewed_Click"/>
+            </StackPanel>
+
+            <DataGrid Grid.Row="2" ItemsSource="{Binding SecurityEvents}" Background="#0C0C10" BorderBrush="#252530" BorderThickness="1" 
+                      RowBackground="#0F0F14" AlternatingRowBackground="#121218" 
+                      Foreground="#C5C5D0" HeadersVisibility="Column" 
+                      GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#1A1A22"
+                      AutoGenerateColumns="False" CanUserAddRows="False">
+                <DataGrid.Resources>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Background" Value="#1A1A24"/>
+                        <Setter Property="Foreground" Value="#8A8A9A"/>
+                        <Setter Property="Padding" Value="10,5"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                    </Style>
+                </DataGrid.Resources>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="{x:Static p:Resources.DgColTimestamp}" Width="150" Binding="{Binding Timestamp}"/>
+                    <DataGridTextColumn Header="{x:Static p:Resources.DgColSev}" Width="60" Binding="{Binding Severity}"/>
+                    <DataGridTextColumn Header="{x:Static p:Resources.DgColSourceIp}" Width="130" Binding="{Binding SourceIP}"/>
+                    <DataGridTextColumn Header="{x:Static p:Resources.DgColEventTarget}" Width="*" Binding="{Binding TargetInfo}"/>
+
+                    <DataGridTemplateColumn Header="ACTION" Width="100">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="{x:Static p:Resources.BtnReview}" Background="#2A0808" Foreground="#FF003C" 
+                                        BorderBrush="#FF003C" BorderThickness="1" Margin="2" Cursor="Hand"
+                                        Click="ReviewAction_Click"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+            </Grid>
+            <Grid x:Name="GridSettings" Visibility="Collapsed">
+                <StackPanel>
+                    <TextBlock Text="{x:Static p:Resources.TxtSettingsTitle}" Foreground="#00FFCC" FontSize="24" FontWeight="Black" Margin="0,0,0,30"/>
+
+                    <Border Background="#121216" BorderBrush="#252530" BorderThickness="1" Padding="20">
+                        <StackPanel>
+                            <CheckBox x:Name="ChkRunAtStartup" Content="{x:Static p:Resources.ChkRunAtStartup}" 
+                                      Foreground="#C5C5D0" Cursor="Hand" Checked="ChkRunAtStartup_Checked" Unchecked="ChkRunAtStartup_Unchecked"/>
+                            <TextBlock Text="{x:Static p:Resources.TxtStartupDesc}" Foreground="#6A6A7A" FontSize="11" Margin="20,5,0,0" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </Grid>
+        <!-- #.<Grid Grid.Column="1" Margin="20">-->
+    </Grid>
+</Window>

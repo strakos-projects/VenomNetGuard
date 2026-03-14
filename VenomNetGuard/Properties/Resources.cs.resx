@@ -1,0 +1,238 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <!--
+      Microsoft ResX Schema
+
+      Version 2.0
+
+      The primary goals of this format is to allow a simple XML format
+      that is mostly human readable. The generation and parsing of the
+      various data types are done through the TypeConverter classes
+      associated with the data types.
+
+      Example:
+
+      ... ado.net/XML headers & schema ...
+      <resheader name="resmimetype">text/microsoft-resx</resheader>
+      <resheader name="version">2.0</resheader>
+      <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+      <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+      <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+      <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+      <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+          <value>[base64 mime encoded serialized .NET Framework object]</value>
+      </data>
+      <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+          <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+          <comment>This is a comment</comment>
+      </data>
+
+      There are any number of "resheader" rows that contain simple
+      name/value pairs.
+
+      Each data row contains a name, and value. The row also contains a
+      type or mimetype. Type corresponds to a .NET class that support
+      text/value conversion through the TypeConverter architecture.
+      Classes that don't support this are serialized and stored with the
+      mimetype set.
+
+      The mimetype is used for serialized objects, and tells the
+      ResXResourceReader how to depersist the object. This is currently not
+      extensible. For a given mimetype the value must be set accordingly:
+
+      Note - application/x-microsoft.net.object.binary.base64 is the format
+      that the ResXResourceWriter will generate, however the reader can
+      read any of the formats listed below.
+
+      mimetype: application/x-microsoft.net.object.binary.base64
+      value   : The object must be serialized with
+              : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+              : and then encoded with base64 encoding.
+
+      mimetype: application/x-microsoft.net.object.soap.base64
+      value   : The object must be serialized with
+              : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+              : and then encoded with base64 encoding.
+
+      mimetype: application/x-microsoft.net.object.bytearray.base64
+      value   : The object must be serialized into a byte array
+              : using a System.ComponentModel.TypeConverter
+              : and then encoded with base64 encoding.
+      -->
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string" />
+                            <xsd:attribute name="type" type="xsd:string" />
+                            <xsd:attribute name="mimetype" type="xsd:string" />
+                            <xsd:attribute ref="xml:space" />
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string" />
+                            <xsd:attribute name="name" type="xsd:string" />
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+                            <xsd:attribute ref="xml:space" />
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" />
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="WindowTitle" xml:space="preserve">
+    <value>Venom NetGuard - Taktický Dashboard</value>
+  </data>
+    <data name="TxtNexusCore" xml:space="preserve">
+    <value>VENOM // NETGUARD</value>
+  </data>
+    <data name="BtnEventLogScanner" xml:space="preserve">
+    <value>[►] SKENER UDÁLOSTÍ</value>
+  </data>
+    <data name="BtnPacketSniffer" xml:space="preserve">
+    <value>[ ] ANALYZÁTOR PAKETŮ (UZAMČENO)</value>
+  </data>
+    <data name="TxtAlertSettings" xml:space="preserve">
+    <value>NASTAVENÍ NOTIFIKACÍ</value>
+  </data>
+    <data name="ChkEnableTrayAlerts" xml:space="preserve">
+    <value>POVOLIT UPOZORNĚNÍ V LIŠTĚ</value>
+  </data>
+    <data name="ChkNotifyCritical" xml:space="preserve">
+    <value>OZNAMOVAT KRITICKÉ (5140)</value>
+  </data>
+    <data name="ChkNotifyWarnings" xml:space="preserve">
+    <value>OZNAMOVAT VAROVÁNÍ (4625)</value>
+  </data>
+    <data name="TxtPendingReview" xml:space="preserve">
+    <value>ČEKÁ NA KONTROLU</value>
+  </data>
+    <data name="TxtWarnings24h" xml:space="preserve">
+    <value>VAROVÁNÍ (24h)</value>
+  </data>
+    <data name="TxtSystemStatus" xml:space="preserve">
+    <value>STAV SYSTÉMU</value>
+  </data>
+    <data name="TxtSecure" xml:space="preserve">
+    <value>ZABEZPEČENO</value>
+  </data>
+    <data name="TxtFilterBy" xml:space="preserve">
+    <value>FILTROVAT PODLE:</value>
+  </data>
+    <data name="ChkFilterCritical" xml:space="preserve">
+    <value>KRITICKÉ</value>
+  </data>
+    <data name="ChkFilterWarning" xml:space="preserve">
+    <value>VAROVÁNÍ</value>
+  </data>
+    <data name="ChkFilterInfo" xml:space="preserve">
+    <value>INFO</value>
+  </data>
+    <data name="BtnMarkReviewed" xml:space="preserve">
+    <value>OZNAČIT VŠE ZA ZKONTROLOVANÉ</value>
+  </data>
+    <data name="DgColTimestamp" xml:space="preserve">
+    <value>ČAS</value>
+  </data>
+    <data name="DgColSev" xml:space="preserve">
+    <value>ZÁVAŽNOST</value>
+  </data>
+    <data name="DgColSourceIp" xml:space="preserve">
+    <value>ZDROJOVÁ IP</value>
+  </data>
+    <data name="DgColEventTarget" xml:space="preserve">
+    <value>CÍL UDÁLOSTI (SDÍLENÍ/PORT)</value>
+  </data>
+    <data name="BtnReview" xml:space="preserve">
+    <value>ZKONTROLOVAT</value>
+  </data>
+    <data name="CtxTerminateNexus" xml:space="preserve">
+    <value>Ukončit Venom NetGuard</value>
+  </data>
+    <data name="TrayIconText" xml:space="preserve">
+    <value>Venom NetGuard Skenování</value>
+  </data>
+    <data name="LogNexusInitialized" xml:space="preserve">
+    <value>Venom NetGuard inicializován. Naslouchám událostem zabezpečení Windows...</value>
+  </data>
+    <data name="BalloonTitleCore" xml:space="preserve">
+    <value>VENOM NETGUARD</value>
+  </data>
+    <data name="BalloonMsgActivated" xml:space="preserve">
+    <value>Senzor byl úspěšně aktivován a naslouchá na pozadí.</value>
+  </data>
+    <data name="MsgBoxAccessDeniedTitle" xml:space="preserve">
+    <value>VENOM NETGUARD: Přístup odepřen</value>
+  </data>
+    <data name="MsgBoxAccessDeniedMsg" xml:space="preserve">
+    <value>Systém zablokoval přístup k logům.
+Důvod: {0}
+
+Ujisti se, že jsi spustil Visual Studio (nebo aplikaci) jako Administrátor!</value>
+  </data>
+    <data name="LogTargetFailedLogon" xml:space="preserve">
+    <value>Neúspěšné přihlášení (Událost 4625)</value>
+  </data>
+    <data name="LogTargetShareAccessed" xml:space="preserve">
+    <value>Přístup k síťové složce (Událost 5140)</value>
+  </data>
+    <data name="UnknownIp" xml:space="preserve">
+    <value>Neznámá IP / Lokální</value>
+  </data>
+    <data name="BalloonAlertTitle" xml:space="preserve">
+    <value>VENOM UPOZORNĚNÍ: {0}</value>
+  </data>
+    <data name="BalloonAlertMsg" xml:space="preserve">
+    <value>Detekována aktivita: {0}
+IP: {1}
+[Utišeno na 8s]</value>
+  </data><data name="BtnSettings" xml:space="preserve">
+    <value>[⚙] NASTAVENÍ</value>
+  </data>
+    <data name="TxtSettingsTitle" xml:space="preserve">
+    <value>SYSTÉMOVÉ PŘEDVOLBY</value>
+  </data>
+    <data name="ChkRunAtStartup" xml:space="preserve">
+    <value>SPUSTIT VENOM NETGUARD PŘI STARTU SYSTÉMU (SKRYTĚ)</value>
+  </data>
+    <data name="TxtStartupDesc" xml:space="preserve">
+    <value>Zaregistruje úlohu s nejvyšším oprávněním (Admin), aby se program spouštěl tiše na pozadí bez nutnosti odklikávat bezpečnostní varování UAC.</value>
+  </data>
+</root>

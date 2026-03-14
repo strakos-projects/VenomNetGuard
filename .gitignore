@@ -1,0 +1,8 @@
+﻿.vs/
+**/bin/
+**/obj/
+*.user
+*.suo
+*.cache
+private/
+nexus_data.json
