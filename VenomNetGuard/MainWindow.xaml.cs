@@ -20,9 +20,9 @@ namespace VenomNetGuard
         private DateTime _lastAlertTime = DateTime.MinValue;
         private DateTime _silencedUntil = DateTime.MinValue;
         private int _totalWarningsCount = 0;
-
+        private bool _isRealExit = false;
         private readonly string _saveFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "nexus_data.json");
-
+        private System.Windows.Threading.DispatcherTimer _trayRetryTimer;
         private void MarkAllReviewed_Click(object sender, RoutedEventArgs e)
         {
             SecurityEvents.Clear();
@@ -61,32 +61,98 @@ namespace VenomNetGuard
                 TxtStatus.Foreground = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#00A2FF")); // Modrá
             }
         }
-
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        {
+            if (!_isRealExit)
+            {
+                e.Cancel = true;
+                this.WindowState = WindowState.Minimized;
+                return;
+            }
+            base.OnClosing(e);
+        }
         public MainWindow()
         {
             InitializeComponent();
+
             _notifyIcon = new Forms.NotifyIcon();
             _notifyIcon.Icon = SystemIcons.Shield;
             _notifyIcon.Text = Properties.Resources.TrayIconText;
-            _notifyIcon.Visible = true;
             _notifyIcon.DoubleClick += NotifyIcon_DoubleClick;
             _notifyIcon.BalloonTipClicked += NotifyIcon_BalloonTipClicked;
 
             var contextMenu = new Forms.ContextMenuStrip();
             contextMenu.BackColor = Color.FromArgb(18, 18, 22);
             contextMenu.ForeColor = Color.White;
-
             var exitMenuItem = new Forms.ToolStripMenuItem(Properties.Resources.CtxTerminateNexus);
-            exitMenuItem.Click += (s, e) => { System.Windows.Application.Current.Shutdown(); };
+
+            exitMenuItem.Click += (s, e) => {
+                _isRealExit = true;
+                System.Windows.Application.Current.Shutdown();
+            };
 
             contextMenu.Items.Add(exitMenuItem);
             _notifyIcon.ContextMenuStrip = contextMenu;
+
             SecurityEvents = new ObservableCollection<SecurityEvent>();
             this.DataContext = this;
 
             LoadData();
-
             this.Loaded += MainWindow_Loaded;
+
+            string[] args = Environment.GetCommandLineArgs();
+            if (Array.Exists(args, arg => arg.Equals("-autostart", StringComparison.OrdinalIgnoreCase)))
+            {
+                this.WindowState = WindowState.Minimized;
+                this.ShowInTaskbar = false;
+                StartTrayRetryMechanism();
+            }
+            else
+            {
+                this.WindowState = WindowState.Normal;
+                this.ShowInTaskbar = true;
+                _notifyIcon.Visible = true;
+            }
+        }
+
+        // PŘIDÁNO: Importy pro Windows API (vložte kamkoliv do třídy MainWindow)
+        [System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
+        static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
+        [System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
+        static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass, string lpszWindow);
+
+
+        private async void StartTrayRetryMechanism()
+        {
+            int maxRetries = 60;
+
+            for (int i = 0; i < maxRetries; i++)
+            {
+                IntPtr trayWnd = FindWindow("Shell_TrayWnd", null);
+
+                if (trayWnd != IntPtr.Zero)
+                {
+                    IntPtr trayNotifyWnd = FindWindowEx(trayWnd, IntPtr.Zero, "TrayNotifyWnd", null);
+
+                    if (trayNotifyWnd != IntPtr.Zero)
+                    {
+                        await System.Threading.Tasks.Task.Delay(500);
+
+                        try
+                        {
+                            _notifyIcon.Visible = false; // Reset stavu
+                            _notifyIcon.Visible = true;  // Zobrazení
+                        }
+                        catch
+                        {
+                        }
+
+                        return; 
+                    }
+                }
+                await System.Threading.Tasks.Task.Delay(1000);
+            }
         }
 
         private void SaveData()
@@ -155,6 +221,7 @@ namespace VenomNetGuard
             this.Show();
             this.WindowState = WindowState.Normal;
             this.ShowInTaskbar = true;
+            this.Activate(); 
         }
 
         protected override void OnStateChanged(EventArgs e)
@@ -333,7 +400,7 @@ namespace VenomNetGuard
 
                 if (enable)
                 {
-                    psi.Arguments = $"/create /tn \"{taskName}\" /tr \"\\\"{exePath}\\\"\" /sc onlogon /rl highest /f";
+                    psi.Arguments = $"/create /tn \"{taskName}\" /tr \"\\\"{exePath}\\\" -autostart\" /sc onlogon /rl highest /f";
                 }
                 else
                 {
