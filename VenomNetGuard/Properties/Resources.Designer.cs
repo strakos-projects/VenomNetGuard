@@ -279,11 +279,29 @@ namespace VenomNetGuard.Properties {
         }
         
         /// <summary>
+        ///   Vyhledá lokalizovaný řetězec podobný Security Log Cleared (Event 1102).
+        /// </summary>
+        public static string LogTargetLogCleared {
+            get {
+                return ResourceManager.GetString("LogTargetLogCleared", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Vyhledá lokalizovaný řetězec podobný Network Share Accessed (Event 5140).
         /// </summary>
         public static string LogTargetShareAccessed {
             get {
                 return ResourceManager.GetString("LogTargetShareAccessed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Vyhledá lokalizovaný řetězec podobný New User Account Created (Event 4720).
+        /// </summary>
+        public static string LogTargetUserCreated {
+            get {
+                return ResourceManager.GetString("LogTargetUserCreated", resourceCulture);
             }
         }
         

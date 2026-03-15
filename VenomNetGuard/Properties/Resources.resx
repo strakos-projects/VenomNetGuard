@@ -236,5 +236,10 @@ IP: {1}
     <value>Registers a high-privilege scheduled task to run silently on the background without UAC prompts.</value>
   </data><data name="BalloonMsgMinimized" xml:space="preserve">
 <value>Venom NetGuard is still running in the background. Right-click the tray icon to exit completely.</value>
+  </data><data name="LogTargetUserCreated" xml:space="preserve">
+    <value>New User Account Created (Event 4720)</value>
+  </data>
+    <data name="LogTargetLogCleared" xml:space="preserve">
+    <value>Security Log Cleared (Event 1102)</value>
   </data>
 </root>

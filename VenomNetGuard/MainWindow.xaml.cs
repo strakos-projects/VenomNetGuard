@@ -348,14 +348,33 @@ namespace VenomNetGuard
         {
             long eventId = e.Entry.InstanceId & 0x3FFFFFFF;
 
-            if (eventId == 5140 || eventId == 4625)
+            if (eventId == 5140 || eventId == 4625 || eventId == 4720 || eventId == 1102)
             {
                 string message = e.Entry.Message;
                 string sourceIp = ExtractIpAddress(message);
 
-                string severity = eventId == 4625 ? "WARN" : "CRIT";
-                string target = eventId == 4625 ? Properties.Resources.LogTargetFailedLogon : Properties.Resources.LogTargetShareAccessed;
+                string severity = "";
+                string target = "";
 
+                switch (eventId)
+                {
+                    case 4625:
+                        severity = "WARN";
+                        target = Properties.Resources.LogTargetFailedLogon;
+                        break;
+                    case 5140:
+                        severity = "CRIT";
+                        target = Properties.Resources.LogTargetShareAccessed;
+                        break;
+                    case 4720:
+                        severity = "CRIT";
+                        target = Properties.Resources.LogTargetUserCreated;
+                        break;
+                    case 1102:
+                        severity = "CRIT";
+                        target = Properties.Resources.LogTargetLogCleared;
+                        break;
+                }
                 System.Windows.Application.Current.Dispatcher.Invoke(() =>
                 {
                     SecurityEvents.Add(new SecurityEvent
