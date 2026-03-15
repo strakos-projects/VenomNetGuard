@@ -8,13 +8,16 @@ using System.IO; // PŘIDÁNO: Pro práci se soubory
 using System.Text.Json; // PŘIDÁNO: Pro ukládání do JSON
 using System.Collections.Generic; // PŘIDÁNO: Pro List<T>
 using Forms = System.Windows.Forms;
-
+using System.Diagnostics.Eventing.Reader;
 using Properties = VenomNetGuard.Properties;
 namespace VenomNetGuard
 {
     public partial class MainWindow : Window
     {
+        private long _lastDefenderRecordId = 0;
+        private System.Windows.Threading.DispatcherTimer _defenderTimer;
         public ObservableCollection<SecurityEvent> SecurityEvents { get; set; }
+        private EventLogWatcher _defenderWatcher;
         private EventLog _securityLog;
         private Forms.NotifyIcon _notifyIcon;
         private DateTime _lastAlertTime = DateTime.MinValue;
@@ -157,7 +160,77 @@ namespace VenomNetGuard
                 await System.Threading.Tasks.Task.Delay(1000);
             }
         }
+        private void ChkEnableCFA_Click(object sender, RoutedEventArgs e)
+        {
+            string state = ChkEnableCFA.IsChecked == true ? "1" : "0";
+            RunPowerShellCommand($"Set-MpPreference -EnableControlledFolderAccess {state}");
+        }
 
+        private void BtnAddFolder_Click(object sender, RoutedEventArgs e)
+        {
+            using (var dialog = new Forms.FolderBrowserDialog())
+            {
+                dialog.Description = "Vyberte složku, kterou chcete chránit před ransomwarem";
+                if (dialog.ShowDialog() == Forms.DialogResult.OK)
+                {
+                    string path = dialog.SelectedPath;
+                    RunPowerShellCommand($"Add-MpPreference -ControlledFolderAccessProtectedFolders \"{path}\"");
+                    if (!ListProtectedFolders.Items.Contains(path))
+                        ListProtectedFolders.Items.Add(path);
+                }
+            }
+        }
+        private void RunPowerShellCommand(string command)
+        {
+            try
+            {
+                ProcessStartInfo psi = new ProcessStartInfo("powershell.exe")
+                {
+                    Arguments = $"-Command \"{command}\"",
+                    CreateNoWindow = true,
+                    UseShellExecute = false,
+                    WindowStyle = ProcessWindowStyle.Hidden
+                };
+                Process.Start(psi)?.WaitForExit();
+            }
+            catch (Exception)
+            {
+            }
+        }
+        private void BtnRemoveFolder_Click(object sender, RoutedEventArgs e)
+        {
+            if (ListProtectedFolders.SelectedItem is string path)
+            {
+                RunPowerShellCommand($"Remove-MpPreference -ControlledFolderAccessProtectedFolders \"{path}\"");
+                ListProtectedFolders.Items.Remove(path);
+            }
+        }
+
+        private void BtnAddApp_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new Microsoft.Win32.OpenFileDialog
+            {
+                Title = "Vyberte povolenou aplikaci (např. Visual Studio)",
+                Filter = "Spustitelné soubory (*.exe)|*.exe|Všechny soubory (*.*)|*.*"
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                string path = dialog.FileName;
+                RunPowerShellCommand($"Add-MpPreference -ControlledFolderAccessAllowedApplications \"{path}\"");
+                if (!ListAllowedApps.Items.Contains(path))
+                    ListAllowedApps.Items.Add(path);
+            }
+        }
+
+        private void BtnRemoveApp_Click(object sender, RoutedEventArgs e)
+        {
+            if (ListAllowedApps.SelectedItem is string path)
+            {
+                RunPowerShellCommand($"Remove-MpPreference -ControlledFolderAccessAllowedApplications \"{path}\"");
+                ListAllowedApps.Items.Remove(path);
+            }
+        }
         private void SaveData()
         {
             try
@@ -185,45 +258,73 @@ namespace VenomNetGuard
             var activeBg = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#1F1F2E"));
             var transparent = System.Windows.Media.Brushes.Transparent;
 
-            if (activeGrid == "Dashboard")
-            {
-                BtnNavDashboard.Foreground = activeBrush;
-                BtnNavDashboard.BorderBrush = activeBrush;
-                BtnNavDashboard.Background = activeBg;
-                BtnNavDashboard.BorderThickness = new Thickness(1, 0, 0, 0);
+            BtnNavDashboard.Foreground = inactiveBrush; BtnNavDashboard.Background = transparent; BtnNavDashboard.BorderThickness = new Thickness(0);
+            BtnNavSettings.Foreground = inactiveBrush; BtnNavSettings.Background = transparent; BtnNavSettings.BorderThickness = new Thickness(0);
+            BtnNavShield.Foreground = inactiveBrush; BtnNavShield.Background = transparent; BtnNavShield.BorderThickness = new Thickness(0);
 
-                BtnNavSettings.Foreground = inactiveBrush;
-                BtnNavSettings.BorderBrush = transparent;
-                BtnNavSettings.Background = transparent;
-                BtnNavSettings.BorderThickness = new Thickness(0);
-            }
-            else
-            {
-                BtnNavSettings.Foreground = activeBrush;
-                BtnNavSettings.BorderBrush = activeBrush;
-                BtnNavSettings.Background = activeBg;
-                BtnNavSettings.BorderThickness = new Thickness(1, 0, 0, 0);
-
-                BtnNavDashboard.Foreground = inactiveBrush;
-                BtnNavDashboard.BorderBrush = transparent;
-                BtnNavDashboard.Background = transparent;
-                BtnNavDashboard.BorderThickness = new Thickness(0);
-            }
+            if (activeGrid == "Dashboard") { BtnNavDashboard.Foreground = activeBrush; BtnNavDashboard.Background = activeBg; BtnNavDashboard.BorderThickness = new Thickness(1, 0, 0, 0); }
+            else if (activeGrid == "Settings") { BtnNavSettings.Foreground = activeBrush; BtnNavSettings.Background = activeBg; BtnNavSettings.BorderThickness = new Thickness(1, 0, 0, 0); }
+            else if (activeGrid == "Shield") { BtnNavShield.Foreground = activeBrush; BtnNavShield.Background = activeBg; BtnNavShield.BorderThickness = new Thickness(1, 0, 0, 0); }
         }
-
         private void NavDashboard_Click(object sender, RoutedEventArgs e)
         {
-            GridDashboard.Visibility = Visibility.Visible;
-            GridSettings.Visibility = Visibility.Collapsed;
-            UpdateNavUI("Dashboard"); // Aktualizace menu
+            GridDashboard.Visibility = Visibility.Visible; GridSettings.Visibility = Visibility.Collapsed; GridShield.Visibility = Visibility.Collapsed;
+            UpdateNavUI("Dashboard");
         }
 
         private void NavSettings_Click(object sender, RoutedEventArgs e)
         {
-            GridDashboard.Visibility = Visibility.Collapsed;
-            GridSettings.Visibility = Visibility.Visible;
-            UpdateNavUI("Settings"); // Aktualizace menu
+            GridDashboard.Visibility = Visibility.Collapsed; GridSettings.Visibility = Visibility.Visible; GridShield.Visibility = Visibility.Collapsed;
+            UpdateNavUI("Settings");
         }
+
+        private void NavShield_Click(object sender, RoutedEventArgs e)
+        {
+            GridDashboard.Visibility = Visibility.Collapsed; GridSettings.Visibility = Visibility.Collapsed; GridShield.Visibility = Visibility.Visible;
+            UpdateNavUI("Shield");
+            LoadDefenderSettings();
+        }
+
+        private void LoadDefenderSettings()
+        {
+            try
+            {
+                ProcessStartInfo psiStatus = new ProcessStartInfo("powershell.exe", "-NoProfile -Command \"(Get-MpPreference).EnableControlledFolderAccess\"")
+                { CreateNoWindow = true, UseShellExecute = false, RedirectStandardOutput = true, WindowStyle = ProcessWindowStyle.Hidden };
+
+                using (Process p = Process.Start(psiStatus))
+                {
+                    string output = p.StandardOutput.ReadToEnd().Trim();
+                    ChkEnableCFA.IsChecked = (output == "1");
+                }
+
+                ProcessStartInfo psiFolders = new ProcessStartInfo("powershell.exe", "-NoProfile -Command \"(Get-MpPreference).ControlledFolderAccessProtectedFolders\"")
+                { CreateNoWindow = true, UseShellExecute = false, RedirectStandardOutput = true, WindowStyle = ProcessWindowStyle.Hidden };
+
+                using (Process p = Process.Start(psiFolders))
+                {
+                    string[] folders = p.StandardOutput.ReadToEnd().Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                    ListProtectedFolders.Items.Clear();
+                    foreach (string f in folders)
+                        if (!string.IsNullOrWhiteSpace(f)) ListProtectedFolders.Items.Add(f.Trim());
+                }
+
+                ProcessStartInfo psiApps = new ProcessStartInfo("powershell.exe", "-NoProfile -Command \"(Get-MpPreference).ControlledFolderAccessAllowedApplications\"")
+                { CreateNoWindow = true, UseShellExecute = false, RedirectStandardOutput = true, WindowStyle = ProcessWindowStyle.Hidden };
+
+                using (Process p = Process.Start(psiApps))
+                {
+                    string[] apps = p.StandardOutput.ReadToEnd().Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                    ListAllowedApps.Items.Clear();
+                    foreach (string a in apps)
+                        if (!string.IsNullOrWhiteSpace(a)) ListAllowedApps.Items.Add(a.Trim());
+                }
+            }
+            catch (Exception)
+            {
+            }
+        }
+
         private void LoadData()
         {
             try
@@ -310,10 +411,54 @@ namespace VenomNetGuard
             StartEventLogMonitoring();
         }
 
+        private void DefenderLog_EventWritten(object sender, EventRecordWrittenEventArgs e)
+        {
+            if (e.EventException != null || e.EventRecord == null) return;
+
+            string timestamp = e.EventRecord.TimeCreated?.ToString("yyyy-MM-dd HH:mm:ss") ?? DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            string processName = ExtractBlockedProcess(e.EventRecord);
+            string targetText = $"{Properties.Resources.LogTargetFolderBlocked} (Proces: {processName})";
+            System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                SecurityEvents.Add(new SecurityEvent
+                {
+                    Timestamp = timestamp,
+                    Severity = "CRIT",
+                    SourceIP = "CFA SHIELD",
+                    TargetInfo = targetText
+                });
+
+                UpdateDashboardCounters();
+                SaveData();
+
+                bool isAlertsEnabled = ChkEnableAlerts.IsChecked == true;
+                bool notifyCrit = ChkAlertCrit.IsChecked == true;
+
+                if (isAlertsEnabled && notifyCrit && DateTime.Now > _silencedUntil)
+                {
+                    if ((DateTime.Now - _lastAlertTime).TotalSeconds >= 8)
+                    {
+                        string alertTitle = string.Format(Properties.Resources.BalloonAlertTitle, "CRIT");
+                        string alertMsg = string.Format(Properties.Resources.BalloonAlertMsg, Properties.Resources.LogTargetFolderBlocked, "LOCAL PROCESS");
+
+                        _notifyIcon.ShowBalloonTip(3000, alertTitle, alertMsg, Forms.ToolTipIcon.Error);
+                        _lastAlertTime = DateTime.Now;
+                    }
+                }
+            }));
+        }
         private void StartEventLogMonitoring()
         {
             try
             {
+                string queryStr = "*[System[(EventID=1123 or EventID=1124)]]";
+                EventLogQuery query = new EventLogQuery("Microsoft-Windows-Windows Defender/Operational", PathType.LogName, queryStr);
+
+                _defenderWatcher = new EventLogWatcher(query);
+                _defenderWatcher.EventRecordWritten += DefenderLog_EventWritten;
+                _defenderWatcher.Enabled = true;
+                // ------------------------------------------------------------------
+
                 _securityLog = new EventLog("Security");
                 _securityLog.EnableRaisingEvents = true;
                 _securityLog.EntryWritten += SecurityLog_EntryWritten;
@@ -326,21 +471,12 @@ namespace VenomNetGuard
                     TargetInfo = Properties.Resources.LogNexusInitialized
                 });
 
-                _notifyIcon.ShowBalloonTip(
-                    3000,
-                    Properties.Resources.BalloonTitleCore,
-                    Properties.Resources.BalloonMsgActivated,
-                    Forms.ToolTipIcon.Info);
+                _notifyIcon.ShowBalloonTip(3000, Properties.Resources.BalloonTitleCore, Properties.Resources.BalloonMsgActivated, Forms.ToolTipIcon.Info);
             }
             catch (Exception ex)
             {
                 string errorMsg = string.Format(Properties.Resources.MsgBoxAccessDeniedMsg, ex.Message);
-
-                System.Windows.MessageBox.Show(
-                    errorMsg,
-                    Properties.Resources.MsgBoxAccessDeniedTitle,
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                System.Windows.MessageBox.Show(errorMsg, Properties.Resources.MsgBoxAccessDeniedTitle, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -360,7 +496,8 @@ namespace VenomNetGuard
                 {
                     case 4625:
                         severity = "WARN";
-                        target = Properties.Resources.LogTargetFailedLogon;
+                        string accName = ExtractAccountName(message);
+                        target = $"{Properties.Resources.LogTargetFailedLogon} (Účet: {accName})";
                         break;
                     case 5140:
                         severity = "CRIT";
@@ -379,7 +516,7 @@ namespace VenomNetGuard
                 {
                     SecurityEvents.Add(new SecurityEvent
                     {
-                        Timestamp = e.Entry.TimeGenerated.ToString("HH:mm:ss"),
+                        Timestamp = e.Entry.TimeGenerated.ToString("yyyy-MM-dd HH:mm:ss"),
                         Severity = severity,
                         SourceIP = sourceIp,
                         TargetInfo = target
@@ -420,11 +557,70 @@ namespace VenomNetGuard
                 });
             }
         }
+        private string ExtractBlockedProcess(EventRecord ev)
+        {
+            try
+            {
+                string msg = ev.FormatDescription();
+                if (!string.IsNullOrEmpty(msg))
+                {
+                    Match m = Regex.Match(msg, @"([a-zA-Z]:\\[^\s]+\.exe)", RegexOptions.IgnoreCase);
+                    if (m.Success)
+                    {
+                        return System.IO.Path.GetFileName(m.Groups[1].Value); 
+                    }
+                }
+                foreach (var prop in ev.Properties)
+                {
+                    string val = prop.Value?.ToString();
+                    if (val != null && val.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return System.IO.Path.GetFileName(val);
+                    }
+                }
+            }
+            catch { }
+            return "Neznámý proces";
+        }
+        private string ExtractAccountName(string message)
+        {
+            try
+            {
+                MatchCollection matches = Regex.Matches(message, @"(?:Account Name|Název účtu):\s*([^\s]+)");
 
+                if (matches.Count >= 2)
+                    return matches[1].Groups[1].Value.Trim();
+                else if (matches.Count == 1)
+                    return matches[0].Groups[1].Value.Trim();
+            }
+            catch { }
+
+            return "Neznámý";
+        }
         private string ExtractIpAddress(string message)
         {
-            Match match = Regex.Match(message, @"\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b");
-            return match.Success ? match.Value : Properties.Resources.UnknownIp;
+            try
+            {
+                Match match = Regex.Match(message, @"(?:Source Network Address|Zdrojová síťová adresa|Síťová adresa zdroje|Source Address|Adresa zdroje).*?:\s*([^\s]+)", RegexOptions.IgnoreCase);
+
+                if (match.Success)
+                {
+                    string ip = match.Groups[1].Value.Trim();
+
+                    if (ip == "-" || ip == "::1") return "127.0.0.1";
+
+                    return ip;
+                }
+
+                Match ipv4 = Regex.Match(message, @"\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b");
+                if (ipv4.Success) return ipv4.Value;
+
+                Match ipv6 = Regex.Match(message, @"(?:[A-Fa-f0-9]{1,4}:){2,7}[A-Fa-f0-9]{1,4}(?:%\d+)?", RegexOptions.IgnoreCase);
+                if (ipv6.Success) return ipv6.Value;
+            }
+            catch { }
+
+            return Properties.Resources.UnknownIp;
         }
 
         private void ReviewAction_Click(object sender, RoutedEventArgs e)

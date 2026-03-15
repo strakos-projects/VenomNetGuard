@@ -27,6 +27,12 @@
                         Padding="10" Margin="0,0,0,10" HorizontalContentAlignment="Left" Cursor="No">
                     <TextBlock Text="{x:Static p:Resources.BtnPacketSniffer}" />
                 </Button>
+                <Button x:Name="BtnNavShield" 
+                        Background="Transparent" Foreground="#4A4A5A" BorderThickness="0" 
+                        Padding="10" Margin="0,0,0,10" HorizontalContentAlignment="Left" Cursor="Hand" 
+                        Click="NavShield_Click">
+                    <TextBlock Text="[🛡] DEFENDER SHIELD" FontWeight="Bold"/>
+                </Button>
                 <Button x:Name="BtnNavSettings" 
         Background="Transparent" Foreground="#4A4A5A" BorderThickness="0" 
         Padding="10" Margin="0,0,0,10" HorizontalContentAlignment="Left" Cursor="Hand" 
@@ -136,7 +142,75 @@
                     </Border>
                 </StackPanel>
             </Grid>
+            <!-- #.GridSettings-->
+            <Grid x:Name="GridShield" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0">
+                    <TextBlock Text="{x:Static p:Resources.TxtShieldTitle}" Foreground="#00FFCC" FontSize="24" FontWeight="Black" Margin="0,0,0,10"/>
+                    <TextBlock Text="{x:Static p:Resources.TxtShieldSubtitle}" Foreground="#8A8A9A" Margin="0,0,0,20"/>
+
+                    <Border Background="#121216" BorderBrush="#252530" BorderThickness="1" Padding="20" Margin="0,0,0,20">
+                        <StackPanel>
+                            <CheckBox x:Name="ChkEnableCFA" Content="{x:Static p:Resources.ChkEnableCFA}" 
+                                      Foreground="#FF003C" FontWeight="Bold" Cursor="Hand" Click="ChkEnableCFA_Click"/>
+                            <TextBlock Text="{x:Static p:Resources.TxtCFAWarning}" 
+                                       Foreground="#6A6A7A" FontSize="11" Margin="20,5,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0" Background="#0C0C10" BorderBrush="#252530" BorderThickness="1" Margin="0,0,10,0" Padding="15">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="{x:Static p:Resources.TxtProtectedFolders}" Foreground="#00A2FF" FontWeight="Bold" Margin="0,0,0,10"/>
+
+                            <ListBox x:Name="ListProtectedFolders" Grid.Row="1" Background="#0F0F14" Foreground="#C5C5D0" 
+                                     BorderBrush="#1A1A22" BorderThickness="1" Margin="0,0,0,10" FontFamily="Consolas"/>
+
+                            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Button Content="{x:Static p:Resources.BtnRemove}" Background="#2A0808" Foreground="#FF003C" BorderThickness="0" Padding="10,5" Margin="0,0,10,0" Cursor="Hand" Click="BtnRemoveFolder_Click"/>
+                                <Button Content="{x:Static p:Resources.BtnAddFolder}" Background="#0A151A" Foreground="#00A2FF" BorderThickness="0" Padding="10,5" Cursor="Hand" Click="BtnAddFolder_Click"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Column="1" Background="#0C0C10" BorderBrush="#252530" BorderThickness="1" Margin="10,0,0,0" Padding="15">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="{x:Static p:Resources.TxtAllowedApps}" Foreground="#FFB800" FontWeight="Bold" Margin="0,0,0,10"/>
+
+                            <ListBox x:Name="ListAllowedApps" Grid.Row="1" Background="#0F0F14" Foreground="#C5C5D0" 
+                                     BorderBrush="#1A1A22" BorderThickness="1" Margin="0,0,0,10" FontFamily="Consolas"/>
+
+                            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Button Content="{x:Static p:Resources.BtnRemove}" Background="#2A0808" Foreground="#FF003C" BorderThickness="0" Padding="10,5" Margin="0,0,10,0" Cursor="Hand" Click="BtnRemoveApp_Click"/>
+                                <Button Content="{x:Static p:Resources.BtnAddApp}" Background="#1A1505" Foreground="#FFB800" BorderThickness="0" Padding="10,5" Cursor="Hand" Click="BtnAddApp_Click"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Grid>
+            <!-- #.GridShield-->
         </Grid>
+       
         <!-- #.<Grid Grid.Column="1" Margin="20">-->
     </Grid>
 </Window>

@@ -241,5 +241,36 @@ IP: {1}
   </data>
     <data name="LogTargetLogCleared" xml:space="preserve">
     <value>Bezpečnostní log byl vymazán (Událost 1102)</value>
+  </data><data name="BtnNavShield" xml:space="preserve">
+    <value>[🛡] DEFENDER SHIELD</value>
+  </data>
+    <data name="TxtShieldTitle" xml:space="preserve">
+    <value>DEFENDER SHIELD (CFA)</value>
+  </data>
+    <data name="TxtShieldSubtitle" xml:space="preserve">
+    <value>Uzamkněte specifické složky jako ochranu před neoprávněnými změnami nebo útoky ransomwaru.</value>
+  </data>
+    <data name="ChkEnableCFA" xml:space="preserve">
+    <value>ZAPNOUT ŘÍZENÝ PŘÍSTUP KE SLOŽKÁM (GLOBÁLNĚ)</value>
+  </data>
+    <data name="TxtCFAWarning" xml:space="preserve">
+    <value>Varování: Vyžaduje práva Administrátora. Windows Defender musí být váš aktivní antivir.</value>
+  </data>
+    <data name="TxtProtectedFolders" xml:space="preserve">
+    <value>CHRÁNĚNÉ SLOŽKY</value>
+  </data>
+    <data name="BtnRemove" xml:space="preserve">
+    <value>- ODEBRAT</value>
+  </data>
+    <data name="BtnAddFolder" xml:space="preserve">
+    <value>+ PŘIDAT SLOŽKU</value>
+  </data>
+    <data name="TxtAllowedApps" xml:space="preserve">
+    <value>POVOLENÉ APLIKACE</value>
+  </data>
+    <data name="BtnAddApp" xml:space="preserve">
+    <value>+ PŘIDAT APLIKACI</value>
+  </data><data name="LogTargetFolderBlocked" xml:space="preserve">
+<value>Protected Folder Access Blocked (Event 1123)</value>
   </data>
 </root>

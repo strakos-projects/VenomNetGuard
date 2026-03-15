@@ -241,5 +241,36 @@ IP: {1}
   </data>
     <data name="LogTargetLogCleared" xml:space="preserve">
     <value>Security Log Cleared (Event 1102)</value>
+  </data><data name="BtnNavShield" xml:space="preserve">
+    <value>[🛡] DEFENDER SHIELD</value>
+  </data>
+    <data name="TxtShieldTitle" xml:space="preserve">
+    <value>DEFENDER SHIELD (CFA)</value>
+  </data>
+    <data name="TxtShieldSubtitle" xml:space="preserve">
+    <value>Lock down specific directories to prevent unauthorized modifications or ransomware attacks.</value>
+  </data>
+    <data name="ChkEnableCFA" xml:space="preserve">
+    <value>ENABLE CONTROLLED FOLDER ACCESS (GLOBAL)</value>
+  </data>
+    <data name="TxtCFAWarning" xml:space="preserve">
+    <value>Warning: Requires Administrator privileges. Windows Defender must be your active antivirus.</value>
+  </data>
+    <data name="TxtProtectedFolders" xml:space="preserve">
+    <value>PROTECTED FOLDERS</value>
+  </data>
+    <data name="BtnRemove" xml:space="preserve">
+    <value>- REMOVE</value>
+  </data>
+    <data name="BtnAddFolder" xml:space="preserve">
+    <value>+ ADD FOLDER</value>
+  </data>
+    <data name="TxtAllowedApps" xml:space="preserve">
+    <value>ALLOWED APPLICATIONS</value>
+  </data>
+    <data name="BtnAddApp" xml:space="preserve">
+    <value>+ ADD APP</value>
+  </data><data name="LogTargetFolderBlocked" xml:space="preserve">
+<value>Protected Folder Access Blocked (Event 1123)</value>
   </data>
 </root>

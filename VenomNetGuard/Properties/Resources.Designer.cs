@@ -108,6 +108,24 @@ namespace VenomNetGuard.Properties {
         }
         
         /// <summary>
+        ///   Vyhledá lokalizovaný řetězec podobný + ADD APP.
+        /// </summary>
+        public static string BtnAddApp {
+            get {
+                return ResourceManager.GetString("BtnAddApp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Vyhledá lokalizovaný řetězec podobný + ADD FOLDER.
+        /// </summary>
+        public static string BtnAddFolder {
+            get {
+                return ResourceManager.GetString("BtnAddFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Vyhledá lokalizovaný řetězec podobný [►] EVENT LOG SCANNER.
         /// </summary>
         public static string BtnEventLogScanner {
@@ -126,11 +144,29 @@ namespace VenomNetGuard.Properties {
         }
         
         /// <summary>
+        ///   Vyhledá lokalizovaný řetězec podobný [🛡] DEFENDER SHIELD.
+        /// </summary>
+        public static string BtnNavShield {
+            get {
+                return ResourceManager.GetString("BtnNavShield", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Vyhledá lokalizovaný řetězec podobný [ ] PACKET SNIFFER (LOCKED).
         /// </summary>
         public static string BtnPacketSniffer {
             get {
                 return ResourceManager.GetString("BtnPacketSniffer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Vyhledá lokalizovaný řetězec podobný - REMOVE.
+        /// </summary>
+        public static string BtnRemove {
+            get {
+                return ResourceManager.GetString("BtnRemove", resourceCulture);
             }
         }
         
@@ -149,6 +185,15 @@ namespace VenomNetGuard.Properties {
         public static string BtnSettings {
             get {
                 return ResourceManager.GetString("BtnSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Vyhledá lokalizovaný řetězec podobný ENABLE CONTROLLED FOLDER ACCESS (GLOBAL).
+        /// </summary>
+        public static string ChkEnableCFA {
+            get {
+                return ResourceManager.GetString("ChkEnableCFA", resourceCulture);
             }
         }
         
@@ -279,6 +324,15 @@ namespace VenomNetGuard.Properties {
         }
         
         /// <summary>
+        ///   Vyhledá lokalizovaný řetězec podobný Protected Folder Access Blocked (Event 1123).
+        /// </summary>
+        public static string LogTargetFolderBlocked {
+            get {
+                return ResourceManager.GetString("LogTargetFolderBlocked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Vyhledá lokalizovaný řetězec podobný Security Log Cleared (Event 1102).
         /// </summary>
         public static string LogTargetLogCleared {
@@ -345,6 +399,24 @@ namespace VenomNetGuard.Properties {
         }
         
         /// <summary>
+        ///   Vyhledá lokalizovaný řetězec podobný ALLOWED APPLICATIONS.
+        /// </summary>
+        public static string TxtAllowedApps {
+            get {
+                return ResourceManager.GetString("TxtAllowedApps", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Vyhledá lokalizovaný řetězec podobný Warning: Requires Administrator privileges. Windows Defender must be your active antivirus..
+        /// </summary>
+        public static string TxtCFAWarning {
+            get {
+                return ResourceManager.GetString("TxtCFAWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Vyhledá lokalizovaný řetězec podobný FILTER BY:.
         /// </summary>
         public static string TxtFilterBy {
@@ -372,6 +444,15 @@ namespace VenomNetGuard.Properties {
         }
         
         /// <summary>
+        ///   Vyhledá lokalizovaný řetězec podobný PROTECTED FOLDERS.
+        /// </summary>
+        public static string TxtProtectedFolders {
+            get {
+                return ResourceManager.GetString("TxtProtectedFolders", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Vyhledá lokalizovaný řetězec podobný SECURE.
         /// </summary>
         public static string TxtSecure {
@@ -386,6 +467,24 @@ namespace VenomNetGuard.Properties {
         public static string TxtSettingsTitle {
             get {
                 return ResourceManager.GetString("TxtSettingsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Vyhledá lokalizovaný řetězec podobný Lock down specific directories to prevent unauthorized modifications or ransomware attacks..
+        /// </summary>
+        public static string TxtShieldSubtitle {
+            get {
+                return ResourceManager.GetString("TxtShieldSubtitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Vyhledá lokalizovaný řetězec podobný DEFENDER SHIELD (CFA).
+        /// </summary>
+        public static string TxtShieldTitle {
+            get {
+                return ResourceManager.GetString("TxtShieldTitle", resourceCulture);
             }
         }
         

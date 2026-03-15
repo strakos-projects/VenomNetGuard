@@ -15,9 +15,9 @@ namespace VenomNetGuard
         protected override void OnStartup(StartupEventArgs e)
         {
      
-            /*CultureInfo lang = new CultureInfo("en");
+            /**/CultureInfo lang = new CultureInfo("en");
             Thread.CurrentThread.CurrentCulture = lang;
-            Thread.CurrentThread.CurrentUICulture = lang;*/
+            Thread.CurrentThread.CurrentUICulture = lang;
             base.OnStartup(e);
         }
     }
