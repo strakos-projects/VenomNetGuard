@@ -106,7 +106,7 @@
                     </Style>
                 </DataGrid.Resources>
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="{x:Static p:Resources.DgColTimestamp}" Width="150" Binding="{Binding Timestamp}"/>
+                    <DataGridTextColumn Header="{x:Static p:Resources.DgColTimestamp}" Width="170" Binding="{Binding Timestamp}"/>
                     <DataGridTextColumn Header="{x:Static p:Resources.DgColSev}" Width="60" Binding="{Binding Severity}"/>
                     <DataGridTextColumn Header="{x:Static p:Resources.DgColSourceIp}" Width="130" Binding="{Binding SourceIP}"/>
                     <DataGridTextColumn Header="{x:Static p:Resources.DgColEventTarget}" Width="*" Binding="{Binding TargetInfo}"/>

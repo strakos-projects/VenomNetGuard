@@ -320,7 +320,7 @@ namespace VenomNetGuard
 
                 SecurityEvents.Add(new SecurityEvent
                 {
-                    Timestamp = DateTime.Now.ToString("HH:mm:ss"),
+                    Timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
                     Severity = "INFO",
                     SourceIP = "SYSTEM",
                     TargetInfo = Properties.Resources.LogNexusInitialized
