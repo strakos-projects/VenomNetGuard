@@ -14,8 +14,11 @@ namespace VenomNetGuard
 {
     public partial class MainWindow : Window
     {
-        private long _lastDefenderRecordId = 0;
-        private System.Windows.Threading.DispatcherTimer _defenderTimer;
+        private NotificationWindow _customNotifier = null;
+        private DateTime _globalSilenceUntil = DateTime.MinValue;
+
+
+        //private System.Windows.Threading.DispatcherTimer _defenderTimer;
         public ObservableCollection<SecurityEvent> SecurityEvents { get; set; }
         private EventLogWatcher _defenderWatcher;
         private EventLog _securityLog;
@@ -85,7 +88,7 @@ namespace VenomNetGuard
             _notifyIcon.Text = Properties.Resources.TrayIconText;
             _notifyIcon.DoubleClick += NotifyIcon_DoubleClick;
             _notifyIcon.BalloonTipClicked += NotifyIcon_BalloonTipClicked;
-
+            
             var contextMenu = new Forms.ContextMenuStrip();
             contextMenu.BackColor = Color.FromArgb(18, 18, 22);
             contextMenu.ForeColor = Color.White;
@@ -110,7 +113,7 @@ namespace VenomNetGuard
             {
                 _hasShownTrayNotification = true;
                 this.WindowState = WindowState.Minimized;
-                this.ShowInTaskbar = false;
+                // this.ShowInTaskbar = false;
                 StartTrayRetryMechanism();
             }
             else
@@ -147,14 +150,15 @@ namespace VenomNetGuard
 
                         try
                         {
-                            _notifyIcon.Visible = false; // Reset stavu
-                            _notifyIcon.Visible = true;  // Zobrazení
+                            // PŘIDÁNO: Teď máme jistotu, že lišta Windows existuje! Můžeme ikonu bezpečně zapnout.
+                            _notifyIcon.Visible = true;
+                            _notifyIcon.ShowBalloonTip(3000, Properties.Resources.BalloonTitleCore, Properties.Resources.BalloonMsgActivated, Forms.ToolTipIcon.Info);
                         }
                         catch
                         {
                         }
 
-                        return; 
+                        return;
                     }
                 }
                 await System.Threading.Tasks.Task.Delay(1000);
@@ -369,7 +373,7 @@ namespace VenomNetGuard
 
             this.Show();
             this.WindowState = WindowState.Normal;
-            this.ShowInTaskbar = true;
+            // this.ShowInTaskbar = true;
             this.Activate(); 
         }
 
@@ -378,7 +382,7 @@ namespace VenomNetGuard
             if (this.WindowState == WindowState.Minimized)
             {
                 this.Hide();
-                this.ShowInTaskbar = false;
+                // this.ShowInTaskbar = false;
                 if (!_hasShownTrayNotification && _notifyIcon.Visible)
                 {
                     _notifyIcon.ShowBalloonTip(
@@ -403,11 +407,16 @@ namespace VenomNetGuard
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+
             ChkRunAtStartup.Checked -= ChkRunAtStartup_Checked;
             ChkRunAtStartup.Unchecked -= ChkRunAtStartup_Unchecked;
             ChkRunAtStartup.IsChecked = IsStartupTaskRegistered();
             ChkRunAtStartup.Checked += ChkRunAtStartup_Checked;
-            ChkRunAtStartup.Unchecked += ChkRunAtStartup_Unchecked;
+            ChkRunAtStartup.Unchecked += ChkRunAtStartup_Unchecked; 
+            if (this.WindowState == WindowState.Minimized)
+            {
+                this.Hide();
+            }
             StartEventLogMonitoring();
         }
 
@@ -434,16 +443,25 @@ namespace VenomNetGuard
                 bool isAlertsEnabled = ChkEnableAlerts.IsChecked == true;
                 bool notifyCrit = ChkAlertCrit.IsChecked == true;
 
-                if (isAlertsEnabled && notifyCrit && DateTime.Now > _silencedUntil)
+                /*if (isAlertsEnabled && notifyCrit && DateTime.Now > _silencedUntil)
                 {
                     if ((DateTime.Now - _lastAlertTime).TotalSeconds >= 8)
                     {
                         string alertTitle = string.Format(Properties.Resources.BalloonAlertTitle, "CRIT");
                         string alertMsg = string.Format(Properties.Resources.BalloonAlertMsg, Properties.Resources.LogTargetFolderBlocked, "LOCAL PROCESS");
-
-                        _notifyIcon.ShowBalloonTip(3000, alertTitle, alertMsg, Forms.ToolTipIcon.Error);
+                        if (_notifyIcon.Visible)
+                        {
+                            _notifyIcon.ShowBalloonTip(3000, alertTitle, alertMsg, Forms.ToolTipIcon.Error);
                         _lastAlertTime = DateTime.Now;
+                        }
                     }
+                }*/
+                if (isAlertsEnabled && notifyCrit)
+                {
+                    string alertTitle = string.Format(Properties.Resources.BalloonAlertTitle, "CRIT");
+                    string alertMsg = string.Format(Properties.Resources.BalloonAlertMsg, Properties.Resources.LogTargetFolderBlocked, "LOCAL PROCESS");
+
+                    ShowCustomNotification(alertTitle, alertMsg, "CRIT");
                 }
             }));
         }
@@ -470,9 +488,11 @@ namespace VenomNetGuard
                     SourceIP = "SYSTEM",
                     TargetInfo = Properties.Resources.LogNexusInitialized
                 });
+                if (_notifyIcon.Visible)
+                {
+                    _notifyIcon.ShowBalloonTip(3000, Properties.Resources.BalloonTitleCore, Properties.Resources.BalloonMsgActivated, Forms.ToolTipIcon.Info);
 
-                _notifyIcon.ShowBalloonTip(3000, Properties.Resources.BalloonTitleCore, Properties.Resources.BalloonMsgActivated, Forms.ToolTipIcon.Info);
-            }
+                } }
             catch (Exception ex)
             {
                 string errorMsg = string.Format(Properties.Resources.MsgBoxAccessDeniedMsg, ex.Message);
@@ -488,31 +508,19 @@ namespace VenomNetGuard
             {
                 string message = e.Entry.Message;
                 string sourceIp = ExtractIpAddress(message);
-
                 string severity = "";
                 string target = "";
 
                 switch (eventId)
                 {
-                    case 4625:
-                        severity = "WARN";
-                        string accName = ExtractAccountName(message);
-                        target = $"{Properties.Resources.LogTargetFailedLogon} (Účet: {accName})";
-                        break;
-                    case 5140:
-                        severity = "CRIT";
-                        target = Properties.Resources.LogTargetShareAccessed;
-                        break;
-                    case 4720:
-                        severity = "CRIT";
-                        target = Properties.Resources.LogTargetUserCreated;
-                        break;
-                    case 1102:
-                        severity = "CRIT";
-                        target = Properties.Resources.LogTargetLogCleared;
-                        break;
+                    case 4625: severity = "WARN"; target = $"{Properties.Resources.LogTargetFailedLogon} (Účet: {ExtractAccountName(message)})"; break;
+                    case 5140: severity = "CRIT"; target = Properties.Resources.LogTargetShareAccessed; break;
+                    case 4720: severity = "CRIT"; target = Properties.Resources.LogTargetUserCreated; break;
+                    case 1102: severity = "CRIT"; target = Properties.Resources.LogTargetLogCleared; break;
                 }
-                System.Windows.Application.Current.Dispatcher.Invoke(() =>
+
+                // Používáme BeginInvoke (neblokuje) a žádné další zanoření
+                System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                 {
                     SecurityEvents.Add(new SecurityEvent
                     {
@@ -521,22 +529,15 @@ namespace VenomNetGuard
                         SourceIP = sourceIp,
                         TargetInfo = target
                     });
+
                     if (severity == "WARN") _totalWarningsCount++;
                     UpdateDashboardCounters();
-
                     SaveData();
 
-                    bool isAlertsEnabled = false;
-                    bool notifyCrit = false;
-                    bool notifyWarn = false;
-
-                    System.Windows.Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        isAlertsEnabled = ChkEnableAlerts.IsChecked == true;
-                        notifyCrit = ChkAlertCrit.IsChecked == true;
-                        notifyWarn = ChkAlertWarn.IsChecked == true;
-                    });
-
+                    bool isAlertsEnabled = ChkEnableAlerts.IsChecked == true;
+                    bool notifyCrit = ChkAlertCrit.IsChecked == true;
+                    bool notifyWarn = ChkAlertWarn.IsChecked == true;
+                    /*
                     if (isAlertsEnabled && DateTime.Now > _silencedUntil)
                     {
                         if ((severity == "CRIT" && notifyCrit) || (severity == "WARN" && notifyWarn))
@@ -544,17 +545,29 @@ namespace VenomNetGuard
                             if ((DateTime.Now - _lastAlertTime).TotalSeconds >= 8)
                             {
                                 Forms.ToolTipIcon iconType = severity == "CRIT" ? Forms.ToolTipIcon.Error : Forms.ToolTipIcon.Warning;
-
                                 string alertTitle = string.Format(Properties.Resources.BalloonAlertTitle, severity);
                                 string alertMsg = string.Format(Properties.Resources.BalloonAlertMsg, target, sourceIp);
 
-                                _notifyIcon.ShowBalloonTip(3000, alertTitle, alertMsg, iconType);
-
-                                _lastAlertTime = DateTime.Now;
+                                if (_notifyIcon.Visible)
+                                {
+                                    
+                                    _notifyIcon.ShowBalloonTip(3000, alertTitle, alertMsg, iconType);
+                                  _lastAlertTime = DateTime.Now;}
+                              
                             }
                         }
+                    }*/
+                    if (isAlertsEnabled)
+                    {
+                        if ((severity == "CRIT" && notifyCrit) || (severity == "WARN" && notifyWarn))
+                        {
+                            string alertTitle = string.Format(Properties.Resources.BalloonAlertTitle, severity);
+                            string alertMsg = string.Format(Properties.Resources.BalloonAlertMsg, target, sourceIp);
+
+                            ShowCustomNotification(alertTitle, alertMsg, severity);
+                        }
                     }
-                });
+                }));
             }
         }
         private string ExtractBlockedProcess(EventRecord ev)
@@ -709,6 +722,33 @@ namespace VenomNetGuard
                 return false;
             }
         }
+
+        private void ShowCustomNotification(string title, string message, string severity)
+        {
+            // Pokud jsme v tichém režimu (umlčeno na 20s po zavření), zprávu úplně ignorujeme
+            if (DateTime.Now < _globalSilenceUntil) return;
+
+            if (_customNotifier != null && _customNotifier.IsLoaded)
+            {
+                // Okno už existuje (jsme uvnitř 10s okna). Jen přepíšeme text na nejnovější a pípne.
+                _customNotifier.UpdateAlert(title, message, severity);
+            }
+            else
+            {
+                // Vytváříme nové vyskakovací okno
+                _customNotifier = new NotificationWindow(title, message, severity);
+
+                // MAGIE: Jakmile se okno po svých 10s samo zavře, zablokujeme další okna na 20 sekund!
+                _customNotifier.Closed += (s, ev) =>
+                {
+                    _globalSilenceUntil = DateTime.Now.AddSeconds(20);
+                    _customNotifier = null;
+                };
+
+                _customNotifier.Show();
+            }
+        }
+
     }
 
     public class SecurityEvent
