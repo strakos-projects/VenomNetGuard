@@ -42,13 +42,16 @@
                 <TextBlock Text="{x:Static p:Resources.TxtAlertSettings}" Foreground="#4A4A5A" FontSize="12" FontWeight="Bold" Margin="0,20,0,10"/>
 
                 <CheckBox x:Name="ChkEnableAlerts" Content="{x:Static p:Resources.ChkEnableTrayAlerts}" IsChecked="True" 
-                          Foreground="#C5C5D0" Margin="10,0,0,10" Cursor="Hand"/>
+                          Foreground="#C5C5D0" Margin="10,0,0,10" Cursor="Hand" Click="Setting_Changed"/>
 
                 <CheckBox x:Name="ChkAlertCrit" Content="{x:Static p:Resources.ChkNotifyCritical}" IsChecked="True" 
-                          Foreground="#FF003C" Margin="25,0,0,8" Cursor="Hand"/>
+                          Foreground="#FF003C" Margin="25,0,0,8" Cursor="Hand" Click="Setting_Changed"/>
 
                 <CheckBox x:Name="ChkAlertWarn" Content="{x:Static p:Resources.ChkNotifyWarnings}" IsChecked="False" 
-                          Foreground="#FFB800" Margin="25,0,0,8" Cursor="Hand"/>
+                          Foreground="#FFB800" Margin="25,0,0,8" Cursor="Hand" Click="Setting_Changed"/>
+
+                <CheckBox x:Name="ChkAlertInfo" Content="{x:Static p:Resources.ChkNotifyInfo}" IsChecked="False" 
+                          Foreground="#00A2FF" Margin="25,0,0,8" Cursor="Hand" Click="Setting_Changed"/>
             </StackPanel>
         </Border>
 
@@ -90,15 +93,17 @@
                 </Border>
             </Grid>
 
-            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,10">
-                <TextBlock Text="{x:Static p:Resources.TxtFilterBy}" Foreground="#8A8A9A" VerticalAlignment="Center" Margin="0,0,15,0"/>
-                <CheckBox Content="{x:Static p:Resources.ChkFilterCritical}" Foreground="#FF003C" IsChecked="True" Margin="0,0,15,0" VerticalAlignment="Center"/>
-                <CheckBox Content="{x:Static p:Resources.ChkFilterWarning}" Foreground="#FFB800" IsChecked="True" Margin="0,0,15,0" VerticalAlignment="Center"/>
-                <CheckBox Content="{x:Static p:Resources.ChkFilterInfo}" Foreground="#00A2FF" Margin="0,0,15,0" VerticalAlignment="Center"/>
-                <Button Content="{x:Static p:Resources.BtnMarkReviewed}" Background="#1F1F2E" Foreground="#FFFFFF" BorderThickness="0" Padding="10,5" Margin="50,0,0,0" Cursor="Hand" Click="MarkAllReviewed_Click"/>
-            </StackPanel>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,10">
+                    <TextBlock Text="{x:Static p:Resources.TxtFilterBy}" Foreground="#8A8A9A" VerticalAlignment="Center" Margin="0,0,15,0"/>
 
-            <DataGrid Grid.Row="2" ItemsSource="{Binding SecurityEvents}" Background="#0C0C10" BorderBrush="#252530" BorderThickness="1" 
+                    <CheckBox x:Name="ChkFilterCrit" Content="{x:Static p:Resources.ChkFilterCritical}" Foreground="#FF003C" IsChecked="True" Margin="0,0,15,0" VerticalAlignment="Center" Click="Filter_Click"/>
+                    <CheckBox x:Name="ChkFilterWarn" Content="{x:Static p:Resources.ChkFilterWarning}" Foreground="#FFB800" IsChecked="True" Margin="0,0,15,0" VerticalAlignment="Center" Click="Filter_Click"/>
+                    <CheckBox x:Name="ChkFilterInfo" Content="{x:Static p:Resources.ChkFilterInfo}" Foreground="#00A2FF" Margin="0,0,15,0" VerticalAlignment="Center" Click="Filter_Click"/>
+
+                    <Button Content="{x:Static p:Resources.BtnMarkReviewed}" Background="#1F1F2E" Foreground="#FFFFFF" BorderThickness="0" Padding="10,5" Margin="50,0,0,0" Cursor="Hand" Click="MarkAllReviewed_Click"/>
+                </StackPanel>
+
+                <DataGrid Grid.Row="2" ItemsSource="{Binding SecurityEvents}" Background="#0C0C10" BorderBrush="#252530" BorderThickness="1" 
                       RowBackground="#0F0F14" AlternatingRowBackground="#121218" 
                       Foreground="#C5C5D0" HeadersVisibility="Column" 
                       GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#1A1A22"

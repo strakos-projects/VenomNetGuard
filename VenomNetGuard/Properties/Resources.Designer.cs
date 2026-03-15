@@ -61,6 +61,15 @@ namespace VenomNetGuard.Properties {
         }
         
         /// <summary>
+        ///   Vyhledá lokalizovaný řetězec podobný [ NETWORK ACCESS ].
+        /// </summary>
+        public static string AlertTitleInfo {
+            get {
+                return ResourceManager.GetString("AlertTitleInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Vyhledá lokalizovaný řetězec podobný Activity detected: {0}
         ///IP: {1}
         ///[Silenced for 8s].
@@ -243,6 +252,15 @@ namespace VenomNetGuard.Properties {
         }
         
         /// <summary>
+        ///   Vyhledá lokalizovaný řetězec podobný NOTIFY INFO (4624).
+        /// </summary>
+        public static string ChkNotifyInfo {
+            get {
+                return ResourceManager.GetString("ChkNotifyInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Vyhledá lokalizovaný řetězec podobný NOTIFY WARNINGS (4625).
         /// </summary>
         public static string ChkNotifyWarnings {
@@ -338,6 +356,15 @@ namespace VenomNetGuard.Properties {
         public static string LogTargetLogCleared {
             get {
                 return ResourceManager.GetString("LogTargetLogCleared", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Vyhledá lokalizovaný řetězec podobný Approved Network Access.
+        /// </summary>
+        public static string LogTargetNetworkAccess {
+            get {
+                return ResourceManager.GetString("LogTargetNetworkAccess", resourceCulture);
             }
         }
         

@@ -272,5 +272,13 @@ IP: {1}
     <value>+ ADD APP</value>
   </data><data name="LogTargetFolderBlocked" xml:space="preserve">
 <value>Protected Folder Access Blocked (Event 1123)</value>
+  </data><data name="ChkNotifyInfo" xml:space="preserve">
+    <value>NOTIFY INFO (4624)</value>
+  </data>
+    <data name="LogTargetNetworkAccess" xml:space="preserve">
+    <value>Approved Network Access</value>
+  </data>
+    <data name="AlertTitleInfo" xml:space="preserve">
+    <value>[ NETWORK ACCESS ]</value>
   </data>
 </root>

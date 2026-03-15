@@ -272,5 +272,13 @@ IP: {1}
     <value>+ PŘIDAT APLIKACI</value>
   </data><data name="LogTargetFolderBlocked" xml:space="preserve">
 <value>Protected Folder Access Blocked (Event 1123)</value>
+  </data><data name="ChkNotifyInfo" xml:space="preserve">
+    <value>OZNAMOVAT INFO (4624)</value>
+  </data>
+    <data name="LogTargetNetworkAccess" xml:space="preserve">
+    <value>Schválený síťový přístup</value>
+  </data>
+    <data name="AlertTitleInfo" xml:space="preserve">
+    <value>[ SÍŤOVÝ PŘÍSTUP ]</value>
   </data>
 </root>

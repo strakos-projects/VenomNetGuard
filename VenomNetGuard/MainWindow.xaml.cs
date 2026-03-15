@@ -103,6 +103,7 @@ namespace VenomNetGuard
             _notifyIcon.ContextMenuStrip = contextMenu;
 
             SecurityEvents = new ObservableCollection<SecurityEvent>();
+            System.Windows.Data.CollectionViewSource.GetDefaultView(SecurityEvents).Filter = FilterSecurityEvents;
             this.DataContext = this;
 
             LoadData();
@@ -130,8 +131,27 @@ namespace VenomNetGuard
 
         [System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
         static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass, string lpszWindow);
+        private void Setting_Changed(object sender, RoutedEventArgs e)
+        {
+            SaveData();
+        }
+        private void Filter_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Data.CollectionViewSource.GetDefaultView(SecurityEvents).Refresh();
+            SaveData(); 
+        }
 
-
+        private bool FilterSecurityEvents(object item)
+        {
+            if (item is SecurityEvent ev)
+            {
+                if (ev.Severity == "CRIT" && ChkFilterCrit.IsChecked == true) return true;
+                if (ev.Severity == "WARN" && ChkFilterWarn.IsChecked == true) return true;
+                if (ev.Severity == "INFO" && ChkFilterInfo.IsChecked == true) return true;
+                return false; 
+            }
+            return true;
+        }
         private async void StartTrayRetryMechanism()
         {
             int maxRetries = 60;
@@ -244,6 +264,12 @@ namespace VenomNetGuard
                     EnableAlerts = ChkEnableAlerts.IsChecked == true,
                     AlertCrit = ChkAlertCrit.IsChecked == true,
                     AlertWarn = ChkAlertWarn.IsChecked == true,
+                    AlertInfo = ChkAlertInfo.IsChecked == true,
+
+                    FilterCrit = ChkFilterCrit.IsChecked == true,
+                    FilterWarn = ChkFilterWarn.IsChecked == true, 
+                    FilterInfo = ChkFilterInfo.IsChecked == true, 
+
                     TotalWarningsCount = _totalWarningsCount,
                     SavedEvents = new List<SecurityEvent>(SecurityEvents)
                 };
@@ -343,6 +369,12 @@ namespace VenomNetGuard
                         ChkEnableAlerts.IsChecked = data.EnableAlerts;
                         ChkAlertCrit.IsChecked = data.AlertCrit;
                         ChkAlertWarn.IsChecked = data.AlertWarn;
+                        ChkAlertInfo.IsChecked = data.AlertInfo;
+
+                        ChkFilterCrit.IsChecked = data.FilterCrit;
+                        ChkFilterWarn.IsChecked = data.FilterWarn;
+                        ChkFilterInfo.IsChecked = data.FilterInfo;
+
                         _totalWarningsCount = data.TotalWarningsCount;
 
                         // Obnova logů
@@ -503,8 +535,7 @@ namespace VenomNetGuard
         private void SecurityLog_EntryWritten(object sender, EntryWrittenEventArgs e)
         {
             long eventId = e.Entry.InstanceId & 0x3FFFFFFF;
-
-            if (eventId == 5140 || eventId == 4625 || eventId == 4720 || eventId == 1102)
+            if (eventId == 5140 || eventId == 4625 || eventId == 4720 || eventId == 1102 || eventId == 4624)
             {
                 string message = e.Entry.Message;
                 string sourceIp = ExtractIpAddress(message);
@@ -513,13 +544,22 @@ namespace VenomNetGuard
 
                 switch (eventId)
                 {
+                    case 4624:
+                        if (Regex.IsMatch(message, @"(?:Logon Type|Typ přihlášení):\s*3", RegexOptions.IgnoreCase))
+                        {
+                            severity = "INFO";
+                            // PŘEPSÁNO NA LOKALIZACI:
+                            target = $"{Properties.Resources.LogTargetNetworkAccess} (Účet: {ExtractAccountName(message)})";
+                        }
+                        break;
                     case 4625: severity = "WARN"; target = $"{Properties.Resources.LogTargetFailedLogon} (Účet: {ExtractAccountName(message)})"; break;
                     case 5140: severity = "CRIT"; target = Properties.Resources.LogTargetShareAccessed; break;
                     case 4720: severity = "CRIT"; target = Properties.Resources.LogTargetUserCreated; break;
                     case 1102: severity = "CRIT"; target = Properties.Resources.LogTargetLogCleared; break;
                 }
+                // Pokud to byla 4624, ale ne ze sítě (např. běžné přihlášení Windows služby), tak ji tiše zahodíme
+                if (string.IsNullOrEmpty(severity)) return;
 
-                // Používáme BeginInvoke (neblokuje) a žádné další zanoření
                 System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                 {
                     SecurityEvents.Add(new SecurityEvent
@@ -537,6 +577,7 @@ namespace VenomNetGuard
                     bool isAlertsEnabled = ChkEnableAlerts.IsChecked == true;
                     bool notifyCrit = ChkAlertCrit.IsChecked == true;
                     bool notifyWarn = ChkAlertWarn.IsChecked == true;
+                    bool notifyInfo = ChkAlertInfo.IsChecked == true;
                     /*
                     if (isAlertsEnabled && DateTime.Now > _silencedUntil)
                     {
@@ -559,11 +600,13 @@ namespace VenomNetGuard
                     }*/
                     if (isAlertsEnabled)
                     {
-                        if ((severity == "CRIT" && notifyCrit) || (severity == "WARN" && notifyWarn))
+                        if ((severity == "CRIT" && notifyCrit) ||
+                            (severity == "WARN" && notifyWarn) ||
+                            (severity == "INFO" && notifyInfo))
                         {
-                            string alertTitle = string.Format(Properties.Resources.BalloonAlertTitle, severity);
-                            string alertMsg = string.Format(Properties.Resources.BalloonAlertMsg, target, sourceIp);
 
+                            string alertTitle = severity == "INFO" ? Properties.Resources.AlertTitleInfo : string.Format(Properties.Resources.BalloonAlertTitle, severity);
+                            string alertMsg = string.Format(Properties.Resources.BalloonAlertMsg, target, sourceIp);
                             ShowCustomNotification(alertTitle, alertMsg, severity);
                         }
                     }
@@ -761,9 +804,15 @@ namespace VenomNetGuard
 
     public class AppData
     {
-        public bool EnableAlerts { get; set; }
-        public bool AlertCrit { get; set; }
-        public bool AlertWarn { get; set; }
+        public bool EnableAlerts { get; set; } = true;
+        public bool AlertCrit { get; set; } = true;
+        public bool AlertWarn { get; set; } = false;
+        public bool AlertInfo { get; set; } = false;
+
+        public bool FilterCrit { get; set; } = true;
+        public bool FilterWarn { get; set; } = true;
+        public bool FilterInfo { get; set; } = false;
+
         public int TotalWarningsCount { get; set; }
         public List<SecurityEvent> SavedEvents { get; set; } = new List<SecurityEvent>();
     }
