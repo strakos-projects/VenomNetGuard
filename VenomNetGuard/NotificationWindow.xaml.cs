@@ -31,7 +31,14 @@ namespace VenomNetGuard
         public void UpdateAlert(string title, string message, string severity, bool isFirst = false)
         {
             if (!isFirst) _alertCount++;
-
+            if (title == "[ SYSTEM DELAY ]")
+            {
+                TxtTitle.Text = $"[ SYSTEM DELAY - {_alertCount} - ]";
+            }
+            else
+            {
+                TxtTitle.Text = title;
+            }
             TxtTitle.Text = title;
             TxtMessage.Text = message;
             TxtCounter.Text = $"ZACHYCENO: {_alertCount}";
@@ -51,9 +58,13 @@ namespace VenomNetGuard
                 MainBorder.BorderBrush = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF003C"));
                 TxtTitle.Foreground = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF003C"));
             }
-            LogDebugData(title, message, severity, isFirst);
-            // Výstražný zvuk při každé změně (včetně prvního otevření)
+            if (title != "[ SYSTEM DELAY ]" || isFirst)
+            {
+                LogDebugData(title, message, severity, isFirst);
+                SystemSounds.Exclamation.Play();// Výstražný zvuk při každé změně (včetně prvního otevření)
             SystemSounds.Exclamation.Play();
+            }
+            
         }
         private void LogDebugData(string title, string message, string severity, bool isFirst)
         {
