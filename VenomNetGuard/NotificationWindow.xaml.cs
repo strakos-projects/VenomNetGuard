@@ -39,7 +39,6 @@ namespace VenomNetGuard
             {
                 TxtTitle.Text = title;
             }
-            TxtTitle.Text = title;
             TxtMessage.Text = message;
             TxtCounter.Text = $"ZACHYCENO: {_alertCount}";
 
@@ -61,8 +60,7 @@ namespace VenomNetGuard
             if (title != "[ SYSTEM DELAY ]" || isFirst)
             {
                 LogDebugData(title, message, severity, isFirst);
-                SystemSounds.Exclamation.Play();// Výstražný zvuk při každé změně (včetně prvního otevření)
-            SystemSounds.Exclamation.Play();
+                SystemSounds.Exclamation.Play();
             }
             
         }
