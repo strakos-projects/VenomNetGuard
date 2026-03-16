@@ -510,7 +510,9 @@ namespace VenomNetGuard
         {
             try
             {
-                string queryStr = "*[System[(EventID=1123 or EventID=1124)]]";
+                string startTime = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
+
+                string queryStr = $"*[System[(EventID=1123 or EventID=1124) and TimeCreated[@SystemTime >= '{startTime}']]]";
                 EventLogQuery query = new EventLogQuery("Microsoft-Windows-Windows Defender/Operational", PathType.LogName, queryStr);
 
                 _defenderWatcher = new EventLogWatcher(query);
