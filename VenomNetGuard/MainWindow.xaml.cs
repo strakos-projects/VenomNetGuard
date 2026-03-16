@@ -30,6 +30,7 @@ namespace VenomNetGuard
         private readonly string _saveFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "nexus_data.json");
         private System.Windows.Threading.DispatcherTimer _trayRetryTimer;
         private bool _hasShownTrayNotification = false;
+        private static System.Threading.Mutex _appMutex = null;
         private void MarkAllReviewed_Click(object sender, RoutedEventArgs e)
         {
             SecurityEvents.Clear();
@@ -81,6 +82,14 @@ namespace VenomNetGuard
         }
         public MainWindow()
         {
+            bool createdNew;
+            _appMutex = new System.Threading.Mutex(true, "VenomNetGuard_Core_Mutex", out createdNew);
+            if (!createdNew)
+            {
+                System.Windows.MessageBox.Show("Venom NetGuard už běží na pozadí v Tray liště!", "Venom NetGuard", MessageBoxButton.OK, MessageBoxImage.Warning);
+                System.Windows.Application.Current.Shutdown();
+                return;
+            }
             InitializeComponent();
             UpdateNavUI("Dashboard");
             _notifyIcon = new Forms.NotifyIcon();
@@ -534,6 +543,15 @@ namespace VenomNetGuard
 
         private void SecurityLog_EntryWritten(object sender, EntryWrittenEventArgs e)
         {
+            if ((DateTime.Now - e.Entry.TimeGenerated).TotalSeconds > 60)
+            {
+                System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    ShowCustomNotification("[ SYSTEM DELAY ]", "Windows odeslal staré/zpožděné události z mezipaměti. Aplikace je z bezpečnostních důvodů ignorovala.", "WARN");
+                }));
+                return;
+
+            }
             long eventId = e.Entry.InstanceId & 0x3FFFFFFF;
             if (eventId == 5140 || eventId == 4625 || eventId == 4720 || eventId == 1102 || eventId == 4624)
             {
