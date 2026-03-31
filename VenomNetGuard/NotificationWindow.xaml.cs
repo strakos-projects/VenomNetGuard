@@ -57,11 +57,11 @@ namespace VenomNetGuard
                 MainBorder.BorderBrush = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF003C"));
                 TxtTitle.Foreground = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF003C"));
             }
-            if (title != "[ SYSTEM DELAY ]" || isFirst)
-            {
-                LogDebugData(title, message, severity, isFirst);
-                SystemSounds.Exclamation.Play();
-            }
+            // if (title != "[ SYSTEM DELAY ]" || isFirst)
+            //{
+            //    LogDebugData(title, message, severity, isFirst);
+            //    SystemSounds.Exclamation.Play();
+            //}
             
         }
         private void LogDebugData(string title, string message, string severity, bool isFirst)

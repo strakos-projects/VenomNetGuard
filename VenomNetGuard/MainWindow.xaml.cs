@@ -547,10 +547,10 @@ namespace VenomNetGuard
         {
             if ((DateTime.Now - e.Entry.TimeGenerated).TotalSeconds > 60)
             {
-                System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    ShowCustomNotification("[ SYSTEM DELAY ]", "Windows odeslal staré/zpožděné události z mezipaměti. Aplikace je z bezpečnostních důvodů ignorovala.", "WARN");
-                }));
+                //System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                //{
+                //    ShowCustomNotification("[ SYSTEM DELAY ]", "Windows odeslal staré/zpožděné události z mezipaměti. Aplikace je z bezpečnostních důvodů ignorovala.", "WARN");
+                //}));
                 return;
 
             }
